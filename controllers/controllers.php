@@ -4,11 +4,20 @@ require("./../connection.php");
 
 class Controller {
 
-    function fetchData() {
+    var $conn;
+
+    public function __construct() {
+
         $db = new DB();
         $conn = $db->connection();
+        $this->conn = $conn;
 
-        $result = $conn->query("SELECT * FROM comments");
+        $tableName = "comments";
+        $this->checkAndCreateTable($tableName);
+    }
+
+    function fetchData() {
+        $result = $this->conn->query("SELECT * FROM comments");
         $data = array();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -26,13 +35,10 @@ class Controller {
     }
 
     function insertData() {
-        $db = new DB();
-        $conn = $db->connection();
-
         $comment = $_POST['comment'];
 
         $data = array();
-        $result = $conn->query("INSERT INTO comments (comment) VALUES ('$comment')");
+        $result = $this->conn->query("INSERT INTO comments (comment) VALUES ('$comment')");
         if ($result) {
             $data['code'] = 200;
             $data['status'] = 'success';
@@ -40,7 +46,7 @@ class Controller {
             
             
             $dataLast = array(
-                'id'=>mysqli_insert_id($conn),
+                'id'=>mysqli_insert_id($this->conn),
                 'comment'=> $comment,
             );
 
@@ -53,6 +59,23 @@ class Controller {
             $data['msg'] = 'Failed to created comment';
             
             return $data;
+        }
+    }
+
+    private function checkAndCreateTable($tableName) {
+        $checkTableExists = "SHOW TABLES LIKE '$tableName'";
+
+        $result = $this->conn->query($checkTableExists);
+
+        if ($result->num_rows == 0) {
+            $createTableQuery = "
+                CREATE TABLE $tableName (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    comment VARCHAR(255) NOT NULL
+                )
+            ";
+
+            $this->conn->query($createTableQuery);
         }
     }
 }

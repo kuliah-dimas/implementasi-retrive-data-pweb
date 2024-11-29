@@ -11,6 +11,7 @@ exit;
 
 include("./../controllers/controllers.php");
 
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 $controller = new Controller();
