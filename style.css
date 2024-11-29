@@ -1,0 +1,30 @@
+.comment_outer {
+    display: flex;
+    border: 1px black solid;
+    padding: 20px;
+    gap: 10px;
+}
+
+.form_comments {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section_comments {
+    width: 50%;
+    border: 1px black solid;
+    padding: 5px;
+}
+
+.comment_input {
+    padding: 10px;
+    height: 200px;
+}
+
+button {
+    height:3rem;
+    background-color: teal;
+    color: white;
+}
