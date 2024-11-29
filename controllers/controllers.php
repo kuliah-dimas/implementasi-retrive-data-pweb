@@ -12,18 +12,18 @@ class Controller {
         $conn = $db->connection();
         $this->conn = $conn;
 
-        $tableName = "comments";
+        $tableName = "komentar";
         $this->checkAndCreateTable($tableName);
     }
 
     function fetchData() {
-        $result = $this->conn->query("SELECT * FROM comments");
+        $result = $this->conn->query("SELECT * FROM komentar");
         $data = array();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $item = array(
                     "id"=> intval($row["id"]),
-                    "comment"=> $row["comment"],
+                    "uraian_komentar"=> $row["uraian_komentar"],
                 );
                 $data[] = $item;
             }
@@ -38,7 +38,7 @@ class Controller {
         $comment = $_POST['comment'];
 
         $data = array();
-        $result = $this->conn->query("INSERT INTO comments (comment) VALUES ('$comment')");
+        $result = $this->conn->query("INSERT INTO komentar (uraian_komentar) VALUES ('$comment')");
         if ($result) {
             $data['code'] = 200;
             $data['status'] = 'success';
@@ -47,7 +47,7 @@ class Controller {
             
             $dataLast = array(
                 'id'=>mysqli_insert_id($this->conn),
-                'comment'=> $comment,
+                'uraian_komentar'=> $comment,
             );
 
             $data['data'] = $dataLast;
@@ -71,7 +71,7 @@ class Controller {
             $createTableQuery = "
                 CREATE TABLE $tableName (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    comment VARCHAR(255) NOT NULL
+                    uraian_komentar VARCHAR(255) NOT NULL
                 )
             ";
 

@@ -11,7 +11,9 @@ const insertDataComment = async (comment) => {
     const data = await response.json();
 
     const $sectionComment = $(".section_comments");
-    $sectionComment.append(`<div>${data.data.id}: ${data.data.comment}`);
+    $sectionComment.append(
+      `<div>${data.data.id}: ${data.data.uraian_komentar}`
+    );
 
     $("#comment").val("");
 
@@ -56,7 +58,9 @@ $(document).ready(function () {
   fetchDataComment().then((value) => {
     const $sectionComment = $(".section_comments");
     value.map((v) => {
-      $sectionComment.append(`<div key="${v.id}">${v.id}: ${v.comment}</div>`);
+      $sectionComment.append(
+        `<div key="${v.id}">${v.id}: ${v.uraian_komentar}</div>`
+      );
     });
   });
 });
