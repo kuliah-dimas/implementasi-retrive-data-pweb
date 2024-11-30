@@ -1,6 +1,6 @@
 const insertDataComment = async (comment) => {
   try {
-    const response = await fetch("http://localhost:8080/comments", {
+    const response = await fetch("http://localhost:8080/comments/", {
       body: `comment=${comment}`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -25,7 +25,7 @@ const insertDataComment = async (comment) => {
 
 const fetchDataComment = async () => {
   try {
-    const response = await fetch("http://localhost:8080/comments");
+    const response = await fetch("http://localhost:8080/comments/");
     const data = await response.json();
     return data;
   } catch (e) {
