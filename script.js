@@ -1,66 +1,63 @@
 const insertDataComment = async (comment) => {
   try {
-    const response = await fetch("http://localhost:8080/comments/", {
+    const response = await fetch("comments/", {
+      method: "POST",
       body: `comment=${comment}`,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      method: "post",
     });
 
     const data = await response.json();
-
-    const $sectionComment = $(".section_comments");
-    $sectionComment.append(
-      `<div>${data.data.id}: ${data.data.uraian_komentar}`
-    );
-
-    $("#comment").val("");
-
-    alert("Berhasil tambah data!");
-  } catch (e) {
-    console.log(e);
+    if (data?.data?.id && data?.data?.uraian_komentar) {
+      $(".section_comments").append(
+        `<div>${data.data.id}: ${data.data.uraian_komentar}</div>`
+      );
+      $("#comment").val(""); 
+      alert("Berhasil tambah data!");
+    }
+  } catch (error) {
+    console.error("Error inserting comment:", error);
   }
 };
 
 const fetchDataComment = async () => {
   try {
-    const response = await fetch("http://localhost:8080/comments/");
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    return null;
+    const response = await fetch("comments/");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    return [];
   }
 };
 
-$(document).ready(function () {
-  $("#btn_send_comment").click(function () {
-    const comment = $("#comment").val();
+const displayComments = (comments) => {
+  if (comments.length > 0) {
+    const commentElements = comments.map(
+      (comment) => `<div key="${comment.id}">${comment.id}: ${comment.uraian_komentar}</div>`
+    );
+    $(".section_comments").append(commentElements.join(''));
+  }
+};
 
-    if (comment == "") {
-      alert("Komentar tidak boleh kosong!");
-      return;
-    }
+const handleSendComment = async () => {
+  const comment = $("#comment").val().trim();
 
-    $(this).html("Loading...");
-    $(this).prop("disabled", true);
+  if (!comment) {
+    alert("Komentar tidak boleh kosong!");
+    return;
+  }
 
-    insertDataComment(comment);
+  const $btnSend = $("#btn_send_comment");
+  $btnSend.prop("disabled", true).html("Loading...");
 
-    setTimeout(() => {
-      $(this).prop("disabled", false);
-      $(this).html("Kirim Komentar");
-    }, 1000);
-  });
-});
+  await insertDataComment(comment);
 
-$(document).ready(function () {
-  fetchDataComment().then((value) => {
-    const $sectionComment = $(".section_comments");
-    value.map((v) => {
-      $sectionComment.append(
-        `<div key="${v.id}">${v.id}: ${v.uraian_komentar}</div>`
-      );
-    });
-  });
+  $btnSend.prop("disabled", false).html("Kirim Komentar");
+};
+
+$(document).ready(async function () {
+  const existingComments = await fetchDataComment();
+  displayComments(existingComments);
+  $("#btn_send_comment").click(handleSendComment);
 });
